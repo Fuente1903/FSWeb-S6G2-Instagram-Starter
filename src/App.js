@@ -6,17 +6,57 @@
 
 // State hook u import edin
 import React from 'react';
+import { useState } from 'react';
 
 // Gönderiler (çoğul!) ve AramaÇubuğu bileşenlerini import edin, çünkü bunlar App bileşeni içinde kullanılacak
 // sahteVeri'yi import edin
 import './App.css';
+import './sahte-veri.js';
 
 const App = () => {
+
+  const [gonderiler, setGonderiler] = useState(sahteVeri);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  return (
+    <div>
+      <input type="text" value={searchTerm} onChange={handleSearch} />
+      <ul>
+        {gonderiler
+        .filter((gonderi) =>
+        gonderi.baslik.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        .map((gonderi) => (
+          <li key={gonderi.id}>{gonderi.baslik}</li>
+          ))}
+      </ul>
+    </div>
+  );
+};
+
   // Gönderi nesneleri dizisini tutmak için "gonderiler" adlı bir state oluşturun, **sahteVeri'yi yükleyin**.
   // Artık sahteVeri'ye ihtiyacınız olmayacak.
   // Arama çubuğunun çalışması için , arama kriterini tutacak başka bir state'e ihtiyacımız olacak.
 	
   const gonderiyiBegen = gonderiID => {
+
+    setGonderiler(
+      gonderiler.map((gonderi) => {
+        if (gonderi.id === gonderiID) {
+          return {
+            ...gonderi,
+            begeniler: gonderi.begeniler +1,
+        };
+      }
+      return gonderi;
+    })
+    );
+  };
+
     /*
       Bu fonksiyon, belirli bir id ile gönderinin beğeni sayısını bir artırma amacına hizmet eder.
 
@@ -28,13 +68,13 @@ const App = () => {
         - gönderinin idsi "gonderiID" ile eşleşirse, istenen değerlerle yeni bir gönderi nesnesi döndürün.
         - aksi takdirde, sadece gönderi nesnesini değiştirmeden döndürün.
      */
-  };
+  ;
 
   return (
     <div className='App'>
-      {/* AramaÇubuğu ve Gönderiler'i render etmesi için buraya ekleyin */}
-      {/* Her bileşenin hangi proplara ihtiyaç duyduğunu kontrol edin, eğer ihtiyaç varsa ekleyin! */}
-    </div>
+      <AramaCubugu aramaKriteri={aramaKriteri} setAramaKriteri={setAramaKriteri} />
+      <Gonderiler gonderiler={gonderiler} setGonderiler={setGonderiler} />
+</div>
   );
 };
 
